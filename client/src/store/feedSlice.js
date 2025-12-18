@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    feed:null
+    feed:[]
 }
 
 const feedSlice = createSlice({
