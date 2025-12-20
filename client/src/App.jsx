@@ -5,6 +5,8 @@ import Body from './components/Body'
 import Feed from './components/Feed'
 import Login from './components/Login'
 import Profile from './components/Profile'
+import Connections from './components/Connections'
+import Requests from './components/Requests'
 
 const App = () => {
   const router = createBrowserRouter([
@@ -23,6 +25,14 @@ const App = () => {
       {
         path:'/feed',
         element:<Feed />
+      },
+      {
+        path:'/connections',
+        element:<Connections />
+      },
+      {
+        path:'/requests',
+        element:<Requests />
       }
      
     ]
