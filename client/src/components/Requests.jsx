@@ -1,18 +1,45 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BASE_API } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addRequest } from "../store/requestsSlice";
+import { addRequest, removeRequest } from "../store/requestsSlice";
 
 const Requests = () => {
+  const [showToast, setShowToast] = useState(false);
+  const [status, setStatus] = useState("");
   const dispatch = useDispatch();
   const requests = useSelector((state) => state.requests);
+  console.log(requests);
   const getRequests = async () => {
-    const res = await axios.get(BASE_API + "/user/requests/received", {
-      withCredentials: true,
-    });
-   
-    dispatch(addRequest(res.data.data));
+    try {
+      const res = await axios.get(BASE_API + "/user/requests/received", {
+        withCredentials: true,
+      });
+
+      dispatch(addRequest(res.data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const reviewRequests = async (status, connectionId) => {
+    try {
+      console.log(connectionId);
+      const res = await axios.post(
+        `${BASE_API}/connection/review/${status}/${connectionId}`,
+        {},
+        { withCredentials: true }
+      );
+      setStatus(status);
+      console.log(res);
+      dispatch(removeRequest(connectionId));
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
     getRequests();
@@ -26,7 +53,9 @@ const Requests = () => {
       <div className="flex justify-center">
         <div className="mt-6">
           {requests.requests.map((user) => {
-            const { firstName, lastName, about, photoURL, _id } = user.FromUserId;
+            console.log(user._id);
+            const { firstName, lastName, about, photoURL, _id } =
+              user.FromUserId;
             return (
               <div
                 key={_id}
@@ -49,12 +78,21 @@ const Requests = () => {
                       <p>{about}</p>
                     </div>
 
-                    {/* OPTIONS */}
+                    {/*  ACCEPT/REJECT BTN */}
                     <div className="flex gap-4">
-                    <button className="btn btn-active btn-success">Accept</button>
-                    <button className="btn btn-active btn-error">Reject</button>
+                      <button
+                        className="btn btn-active btn-success"
+                        onClick={() => reviewRequests("accepted", user._id)}
+                      >
+                        Accept
+                      </button>
+                      <button
+                        className="btn btn-active btn-error"
+                        onClick={() => reviewRequests("rejected", user._id)}
+                      >
+                        Reject
+                      </button>
                     </div>
-                  
                   </div>
                 </div>
               </div>
@@ -62,6 +100,13 @@ const Requests = () => {
           })}
         </div>
       </div>
+      {showToast && (
+        <div className="toast toast-top toast-center">
+          <div className="alert alert-success">
+            <span>Request {status}!</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

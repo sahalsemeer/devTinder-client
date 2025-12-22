@@ -32,7 +32,7 @@ const Connections = () => {
     );
 
   return (
-    <div>
+    <div className="p-10">
       <h1 className="text-center mt-6 font-extrabold text-xl">Connections</h1>
       <div className="flex justify-center">
         <div className="mt-6">

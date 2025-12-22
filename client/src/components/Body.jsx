@@ -6,6 +6,7 @@ import axios from "axios";
 import { BASE_API } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/userSlice";
+import { removeAllFeed } from "../store/feedSlice";
 
 const Body = () => {
   const dispatch = useDispatch()
@@ -13,8 +14,8 @@ const Body = () => {
   const user = useSelector(state => state.user)
   const fetchUser = async () => {
     try {
-      // console.log(user);
-      // if(user === null) return;
+      console.log(user);
+      if(user === null) return;
       const res = await axios.get(`${BASE_API}/profile/view`,{
         withCredentials:true
       });
@@ -24,6 +25,7 @@ const Body = () => {
 
       if(error.status === 401){
         navigate('/login')
+        
       }
       console.log(error);
     }
